@@ -1,0 +1,10 @@
+{
+  "version": "0.4.2",
+  "disks": [],
+  "containers": [],
+  "gpu_warn": 85,
+  "ram_warn": 90,
+  "disk_temp_default": 55,
+  "metrics_mode": "sidecar",
+  "ollama_model": "llama3.2:1b"
+}
