@@ -1,0 +1,9 @@
+# Local configuration and secrets
+watchman.json
+watchman.env
+discord-webhook
+*.bak
+.watchman.tmp.*
+.watchman.*
+__pycache__/
+*.pyc
