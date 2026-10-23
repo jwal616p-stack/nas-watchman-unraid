@@ -6,7 +6,7 @@ import unittest
 from pathlib import Path
 
 HERE = Path(__file__).parent
-JQ = HERE.parent / 'nas-watchman-release-candidate/.test-tools/bin'
+
 
 
 class EngineModes(unittest.TestCase):
@@ -27,7 +27,7 @@ class EngineModes(unittest.TestCase):
             env = dict(os.environ, WATCHMAN_STATE_DIR=str(root / 'state'),
                        WATCHMAN_TEST_PAYLOAD=str(data), WATCHMAN_METRICS_MODE=mode,
                        WATCHMAN_DISKS='[]', WATCHMAN_CONTAINERS='["ollama"]',
-                       PATH=str(bin_dir) + ':' + str(JQ) + ':' + os.environ['PATH'])
+                       PATH=str(bin_dir) + ':' + os.environ['PATH'])
             r = subprocess.run(['bash', str(script)], env=env, text=True,
                                capture_output=True, timeout=10)
             self.assertEqual(r.returncode, 0, r.stderr + r.stdout)
