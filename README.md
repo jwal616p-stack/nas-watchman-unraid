@@ -14,11 +14,11 @@ stateful alerts, optional Ollama summaries, and Discord notifications.
 - test_*.py — offline regression and simulated integration tests
 - RELEASE-REVIEW-v0.4.2.md — risk assessment, release gates and rollback
 
-## Local tests
+## v0.4.3 parity development branch\nThis branch adds cautious cached parity-slot assignment/status reporting. It does not verify parity protection, check completion, rebuild progress, or real parity-enabled hardware behavior. Do not deploy over the running Watchman instance.\n\n## Local tests
 Run from the project directory:
 ```sh
 python3 -m unittest discover -p 'test_*.py' -q
-bash -n watchman.sh watchman_engine.sh
+bash -n watchman.sh watchman_engine.sh\nbash test_parity_fixtures.sh
 ```
 Tests use mocked interfaces; do not treat passing tests as live NAS validation.
 
