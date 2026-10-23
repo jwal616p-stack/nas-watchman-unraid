@@ -153,13 +153,12 @@ collect_disks() {
       ($arr[0].state // "UNKNOWN") as $state |
       {disk_feed:event(($disks[0]|length)==0;"Unraid cached disk records available: \(($disks[0]|length)>0)"),
        array_state:event($state!="STARTED";"Array state: \($state); parity configuration not assessed")}
-      + (reduce ["parity","parity2"][] as $name ({};
-          ($disks[0][$name] // {}) as $d |
-          .["parity_"+$name] = event(
-            (($d.device // "") != "" and ($d.status // "UNKNOWN") != "DISK_OK");
-            "\($name): \(if ($d.device // "") == "" then "not assigned" elif $d.status == "DISK_OK" then "assigned, status OK (protection unverified)" else "assigned, status "+($d.status // "UNKNOWN") end)"
-          )
-        ))
+      + {parity_parity:event(
+          (($disks[0].parity.device // "") != "") and (($disks[0].parity.status // "") != "DISK_OK");
+          "parity: "+(if ($disks[0].parity.device // "") == "" then "not assigned" else "assigned; status "+($disks[0].parity.status // "UNKNOWN")+" (protection unverified)" end)),
+         parity_parity2:event(
+          (($disks[0].parity2.device // "") != "") and (($disks[0].parity2.status // "") != "DISK_OK");
+          "parity2: "+(if ($disks[0].parity2.device // "") == "" then "not assigned" else "assigned; status "+($disks[0].parity2.status // "UNKNOWN")+" (protection unverified)" end))}
       + (reduce $disk_names[] as $name ({};
         ($disks[0][$name] // {}) as $d |
         ($temp_limits[$name] // $temp_default) as $tw |
