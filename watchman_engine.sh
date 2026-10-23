@@ -1,5 +1,5 @@
 #!/bin/bash
-# NAS Watchman 0.4 release candidate -- host Bash worker for the existing telemetry sidecar.
+# NAS Watchman 0.4.3 development preview -- host Bash worker for the existing telemetry sidecar.
 # --report: local readings; --send-report: Discord readings; --ai: local AI summary
 # --once: one alert check; --watch: checks every minute and a report every 24h.
 # Cached Unraid disk status and selected new syslog events; no SMART tests or repairs.
@@ -153,6 +153,14 @@ collect_disks() {
       ($arr[0].state // "UNKNOWN") as $state |
       {disk_feed:event(($disks[0]|length)==0;"Unraid cached disk records available: \(($disks[0]|length)>0)"),
        array_state:event($state!="STARTED";"Array state: \($state); parity configuration not assessed")}
+      + (reduce ["parity","parity2"][] as $name ({};
+         ($disks[0][$name] // {}) as $d |
+         ($d.device // "") as $dev |
+         ($d.status // "UNKNOWN") as $status |
+         .["parity_"+$name]=event(
+           ($dev!="") and ($status!="DISK_OK");
+           "\($name): \(if $dev=="" then "not assigned" elif $status=="DISK_OK" then "assigned; disk reports OK (parity protection not verified)" else "assigned; status "+$status end)"
+         ))
       + (reduce $disk_names[] as $name ({};
         ($disks[0][$name] // {}) as $d |
         ($temp_limits[$name] // $temp_default) as $tw |
@@ -172,6 +180,8 @@ collect_disks() {
         else . end))' > "$WORK/disk-events" || return 1
     jq -nr --argjson disk_names "$WATCHMAN_DISKS" --slurpfile d "$WORK/disks" --slurpfile a "$WORK/array" '
       "Array: \($a[0].state // "UNKNOWN"); parity configuration not assessed.",
+      (["parity","parity2"][] as $n | ($d[0][$n] // {}) as $v |
+        "\($n) assignment: \(if ($v.device // "")=="" then "not assigned" else "assigned; status "+($v.status // "UNKNOWN")+" (parity protection not verified)" end)"),
       ($disk_names[] as $n | ($d[0][$n] // {}) as $v |
        "\($n): \($v.status // "UNKNOWN"), \($v.fsStatus // "UNKNOWN"); temp \(if ($v.temp // "*")=="*" then "unavailable (may be asleep)" else ($v.temp+" C") end); errors \($v.numErrors // "unknown"); used \(if (try ($v.fsSize|tonumber) catch 0)>0 and (try ($v.fsFree|tonumber) catch null)!=null then ((100*(1-($v.fsFree|tonumber)/($v.fsSize|tonumber))|floor|tostring)+"%") else "unknown" end)")' >> "$WORK/report"
   fi
