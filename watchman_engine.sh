@@ -160,7 +160,7 @@ collect_disks() {
          .["parity_"+$name]=event(
            ($dev!="") and ($status!="DISK_OK");
            "\($name): \(if $dev=="" then "not assigned" elif $status=="DISK_OK" then "assigned; disk reports OK (parity protection not verified)" else "assigned; status "+$status end)"
-         ))
+         )))
       + (reduce $disk_names[] as $name ({};
         ($disks[0][$name] // {}) as $d |
         ($temp_limits[$name] // $temp_default) as $tw |
