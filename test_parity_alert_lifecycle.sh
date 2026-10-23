@@ -28,7 +28,7 @@ emit() {
 }
 assert_count() {
   local expected=$1 actual
-  actual=$(wc -l < "$NOTICES")
+  actual=$(grep -c "^NAS Watchman -" "$NOTICES" || true)
   [[ "$actual" -eq "$expected" ]] || { echo "FAIL: expected $expected notices, got $actual"; cat "$NOTICES"; exit 1; }
 }
 emit healthy; assert_count 0
