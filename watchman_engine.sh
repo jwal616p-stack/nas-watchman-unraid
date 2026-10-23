@@ -154,13 +154,12 @@ collect_disks() {
       {disk_feed:event(($disks[0]|length)==0;"Unraid cached disk records available: \(($disks[0]|length)>0)"),
        array_state:event($state!="STARTED";"Array state: \($state); parity configuration not assessed")}
       + (reduce ["parity","parity2"][] as $name ({};
-         ($disks[0][$name] // {}) as $d |
-         ($d.device // "") as $dev |
-         ($d.status // "UNKNOWN") as $status |
-         .["parity_"+$name]=event(
-           ($dev!="") and ($status!="DISK_OK");
-           "\($name): \(if $dev=="" then "not assigned" elif $status=="DISK_OK" then "assigned; disk reports OK (parity protection not verified)" else "assigned; status "+$status end)"
-         )))
+          ($disks[0][$name] // {}) as $d |
+          .["parity_"+$name] = event(
+            (($d.device // "") != "" and ($d.status // "UNKNOWN") != "DISK_OK");
+            "\($name): \(if ($d.device // "") == "" then "not assigned" elif $d.status == "DISK_OK" then "assigned, status OK (protection unverified)" else "assigned, status "+($d.status // "UNKNOWN") end)"
+          )
+        ))
       + (reduce $disk_names[] as $name ({};
         ($disks[0][$name] // {}) as $d |
         ($temp_limits[$name] // $temp_default) as $tw |
