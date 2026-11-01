@@ -6,6 +6,18 @@ stateful alerts, optional Ollama summaries, and Discord notifications.
 
 **Not a production release. Do not install over a running Watchman instance.**
 
+## Looking for reviewers and future Unraid testers
+
+NAS Watchman is an open-source, read-only Unraid monitoring project in **development preview**. I'm looking for people familiar with Unraid, shell scripting, Python, or security to review the code and help identify compatibility problems before a live test release.
+
+Areas where feedback would be especially useful:
+- Unraid disk/parity status interpretation and edge cases
+- Read-only behavior, permissions, and configuration safety
+- Alert deduplication, recovery behavior, and Discord notification handling
+- Host compatibility and gaps in mocked/offline tests
+
+**Please don't deploy this preview on a production NAS.** The current README and release review document describe outstanding validation gates. If you're interested, [open an issue](https://github.com/jwal616p-stack/nas-watchman-unraid/issues) describing your Unraid version and what you'd like to review or test. Do not share private logs, webhook URLs, or credentials.
+
 ## Files
 - watchman.sh — launcher and configuration wizard
 - watchman_engine.sh — reporting and alert engine
