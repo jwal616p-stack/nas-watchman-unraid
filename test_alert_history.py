@@ -1,11 +1,12 @@
 """Alert state continuity across incomplete telemetry, using engine jq expressions."""
 import json
 import subprocess
+import shutil
 import unittest
 from pathlib import Path
 
 ENGINE = (Path(__file__).parent / 'watchman_engine.sh').read_text()
-JQ = str(Path(__file__).parent.parent / 'nas-watchman-release-candidate/.test-tools/bin/jq')
+JQ = shutil.which('jq') or 'jq'
 
 
 def jq_run(expression, *inputs):
